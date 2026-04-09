@@ -1,0 +1,55 @@
+@startuml LangChain_TS_Agent架构图
+
+skinparam backgroundColor #FEFEFE
+skinparam componentStyle rectangle
+
+title Agent 架构与执行流程
+
+package "Agent 组件" #E8F5E9 {
+    [Agent\nReAct/Plan-and-Execute] as agent
+    [Tools\nTool[]] as tools
+    [LLM\nChatOpenAI] as llm
+    [Prompt\nReAct Prompt] as prompt
+    [AgentExecutor] as executor
+    [Memory\nBufferMemory] as memory
+}
+
+package "执行循环" #FFF3E0 {
+    [Thought\n思考] as thought
+    [Action\n行动] as action
+    [Observation\n观察] as observation
+    [Final Answer\n最终回答] as final
+}
+
+' 架构关系
+agent --> tools : has
+agent --> llm : uses
+agent --> prompt : uses
+agent --> memory : uses
+executor --> agent : orchestrates
+
+' 执行流程
+thought --> action : decides
+action --> observation : tool executes
+observation --> thought : feedback loop
+thought --> final : complete
+
+note right of executor
+  **执行流程:**
+  1. 接收用户输入
+  2. LLM 生成 Thought
+  3. 解析 Action (Tool)
+  4. 执行 Tool 获取 Observation
+  5. 循环直到 Final Answer
+end note
+
+note left of tools
+  **Tool 类型:**
+  - DynamicTool (函数)
+  - StructuredTool (Zod Schema)
+  - TavilySearch
+  - Calculator
+  - Custom API
+end note
+
+@enduml

@@ -1,0 +1,64 @@
+@startuml LangChain_TS_学习时序图
+
+skinparam backgroundColor #FEFEFE
+skinparam sequenceArrowThickness 2
+
+title LangChain TypeScript 学习阶段时序图
+
+actor "学习者" as learner
+participant "阶段1\n基础" as p1
+participant "阶段2\nRAG/Memory" as p2
+participant "阶段3\nLangGraph" as p3
+participant "阶段4\n生产化" as p4
+participant "实战项目" as project
+
+== Week 1-2: 基础入门 ==
+
+learner -> p1: 1. 环境配置\nNode.js + TypeScript
+activate p1
+p1 --> learner: 项目模板
+learner -> p1: 2. 学习 Model I/O\nChatOpenAI 调用
+p1 --> learner: API 集成能力
+learner -> p1: 3. 掌握 LCEL\n管道语法 |
+p1 --> learner: 链式组合思维
+deactivate p1
+
+== Week 3-4: 核心组件 ==
+
+learner -> p2: 4. Memory 系统\nBuffer/Window/Summary
+activate p2
+p2 --> learner: 上下文管理能力
+learner -> p2: 5. RAG 流程\nLoad → Split → Embed → Store
+p2 --> learner: 向量检索能力
+learner -> p2: 6. Agents 基础\nTools + ReAct
+p2 --> learner: 自主决策能力
+deactivate p2
+
+== Week 5-6: LangGraph ==
+
+learner -> p3: 7. StateGraph 构建\nNodes + Edges
+activate p3
+p3 --> learner: 状态管理思维
+learner -> p3: 8. 持久化配置\nCheckpointer
+p3 --> learner: 会话记忆能力
+learner -> p3: 9. 人机协同\ninterrupt()
+p3 --> learner: 安全控制机制
+deactivate p3
+
+== Week 7-8: 生产化 ==
+
+learner -> p4: 10. 流式处理\nstreamEvents
+activate p4
+p4 --> learner: 实时响应能力
+learner -> p4: 11. 可观测性\nLangSmith
+p4 --> learner: 全链路追踪
+deactivate p4
+
+== 毕业项目 ==
+
+learner -> project: 多Agent协作系统\n研究+写作+审核
+activate project
+project --> learner: 完整工程能力
+deactivate project
+
+@enduml

@@ -1,0 +1,70 @@
+@startuml LangChain_TS_组件关系图
+
+!define RECTANGLE class
+
+skinparam backgroundColor #FEFEFE
+skinparam componentStyle rectangle
+
+title LangChain TypeScript 核心组件关系图
+
+package "@langchain/core" #E1F5FE {
+    [BaseLanguageModel] as base_model
+    [BasePromptTemplate] as base_prompt
+    [BaseOutputParser] as base_parser
+    [Runnable\nInterface] as runnable
+    [BaseMessage\nHuman/AI/System] as messages
+}
+
+package "@langchain/openai" #E8F5E9 {
+    [ChatOpenAI] as openai
+    [OpenAIEmbeddings] as openai_emb
+}
+
+package "langchain" #FFF3E0 {
+    [LLMChain\n(legacy)] as legacy_chain
+    [RetrievalQAChain] as legacy_rag
+}
+
+package "@langchain/langgraph" #F3E5F5 {
+    [StateGraph] as stategraph
+    [MemorySaver] as memory_saver
+    [Command] as command
+}
+
+package "@langchain/community" #ECEFF1 {
+    [PineconeVectorStore] as pinecone
+    [ChromaVectorStore] as chroma
+    [PDFLoader] as pdf_loader
+    [CheerioWebBaseLoader] as web_loader
+}
+
+' 继承关系
+base_model <|-- openai
+base_prompt <|-- runnable
+base_parser <|-- runnable
+
+' 依赖关系
+runnable ..> openai : uses
+runnable ..> openai_emb : uses
+runnable ..> pinecone : uses
+stategraph ..> runnable : orchestrates
+stategraph ..> memory_saver : persists
+
+' 旧版兼容
+legacy_chain ..> base_model : uses
+legacy_rag ..> pinecone : uses
+
+note right of runnable
+  **LCEL (LangChain Expression Language)**
+  现代推荐语法: chain = prompt | model | parser
+end note
+
+note bottom of stategraph
+  **LangGraph 优势**
+  - 状态持久化
+  - 循环/条件边
+  - 人机协同
+  - 多Agent编排
+end note
+
+@enduml

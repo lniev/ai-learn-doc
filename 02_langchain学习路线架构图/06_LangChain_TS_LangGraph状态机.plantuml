@@ -1,0 +1,69 @@
+@startuml LangChain_TS_LangGraph状态机
+
+skinparam backgroundColor #FEFEFE
+skinparam stateBackgroundColor #E1F5FE
+
+title LangGraph 状态机与节点流转
+
+[*] --> Start
+
+state "Start" as start {
+  [*] --> initialize
+  initialize : 初始化 State\nmessages: []
+}
+
+start --> Agent : 开始处理
+
+state "Agent" as agent {
+  state "call_model" as call_model : 调用 LLM\n生成响应/决策
+  state "should_continue" as decision : 判断是否需要\n调用工具
+
+  [*] --> call_model
+  call_model --> decision
+  decision --> call_model : continue (需工具)
+  decision --> [*] : end (直接回答)
+}
+
+agent --> Tools : 需要工具执行
+
+state "Tools" as tools {
+  state "search" as search : Tavily 搜索
+  state "calculator" as calc : 计算工具
+  state "database" as db : 数据库查询
+
+  [*] --> search
+  [*] --> calc
+  [*] --> db
+}
+
+Tools --> Agent : 返回 Observation
+
+agent --> Interrupt : 需要人工确认
+
+state "Interrupt" as interrupt {
+  [*] --> wait_for_human : 暂停等待\n用户输入
+  wait_for_human --> [*] : 收到确认
+}
+
+Interrupt --> Agent : 继续执行
+
+agent --> [*] : 生成最终回答
+
+note right of agent
+  **State 结构:**
+  {
+    messages: BaseMessage[],
+    next: "agent" | "tools" | "end",
+    iteration: number,
+    context: Record<string, any>
+  }
+end note
+
+note left of interrupt
+  **Human-in-the-Loop:**
+  - 敏感操作确认
+  - 预算超限检查
+  - 内容审核
+end note
+
+@enduml
